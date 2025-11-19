@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
-import os # 导入 os 库，用于读取环境变量
+# 移除 os 库，因为它现在已无用
 
 # ==========================================
 # 1. 页面配置与自定义样式
@@ -81,21 +81,22 @@ st.markdown('<div class="sub-title">“ 观掌中乾坤， 解生命剧本 ”</
 
 st.info("📸 请上传一张清晰的手掌照片（建议自然光，含手指手腕）。")
 
-# 修复警告：使用 label_visibility="hidden" 隐藏标签
+# 使用 label_visibility="hidden" 隐藏标签
 uploaded_file = st.file_uploader("手相照片", type=["jpg", "jpeg", "png"], label_visibility="hidden")
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    # 修复警告：使用 use_container_width=True 替代 use_column_width
+    # 使用 use_container_width=True
     st.image(image, caption="缘主手相", use_container_width=True)
 
     if st.button("请玄师阅卷", type="primary"):
         
-        # 从环境变量中读取 API Key
-        api_key = st.secrets["gemini"]["api_key"]
+        # <<< 关键修改：从 Streamlit Cloud UI 配置的 GEMINI_API_KEY 中读取 >>>
+        api_key = st.secrets.get("GEMINI_API_KEY") 
         
         if not api_key:
-            st.error("❌ 站长：请配置您的环境变量 `GEMINI_API_KEY`，否则 AI 无法启动。")
+            # <<< 修正提示：提示用户在 Streamlit Cloud 设置里配置密钥 >>>
+            st.error("❌ 站长：密钥配置失败。请检查 Streamlit Cloud 的 Secrets 设置，确保配置了 'GEMINI_API_KEY'。")
         else:
             try:
                 with st.spinner('玄师正在观气、定根、察流... 请稍候...'):
