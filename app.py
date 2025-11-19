@@ -92,7 +92,7 @@ if uploaded_file is not None:
     if st.button("请玄师阅卷", type="primary"):
         
         # 从环境变量中读取 API Key
-        api_key = os.environ.get('GEMINI_API_KEY')
+        api_key = st.secrets["gemini"]["api_key"]
         
         if not api_key:
             st.error("❌ 站长：请配置您的环境变量 `GEMINI_API_KEY`，否则 AI 无法启动。")
